@@ -4,8 +4,8 @@ VPATH=$(SRC_PATH)/tests/tlmu/sc_example/
 
 TLMU=$(CURDIR)/..
 # Edit these to match your install paths
-SYSTEMC = /opt/systemc
-TLM2 = /opt/systemc/TLM-2009-07-15
+#SYSTEMC = /opt/systemc
+TLM2 = $(SYSTEMC)/src
 
 CXXFLAGS += -O2 -g
 CPPFLAGS += -I $(SRC_PATH)/tests/tlmu

@@ -163,9 +163,6 @@ int main(int argc, char **argv)
 		pthread_t tid;
 	} sys[] = {
 	{"libtlmu-arm.so", "ARM", "arm926", "arm-guest/guest"},
-	{"libtlmu-cris.so", "CRIS", "crisv10", "cris-guest/guest"},
-	{"libtlmu-mipsel.so", "MIPS", "24Kc", "mipsel-guest/guest"},
-	{"libtlmu-or32.so", "OPENRISC", "or1200-or32-cpu", "openrisc-guest/guest"},
 	{NULL, NULL, NULL, NULL}
 	};
 
