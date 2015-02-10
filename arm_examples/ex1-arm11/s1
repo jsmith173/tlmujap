@@ -1,0 +1,1 @@
+qemu-system-arm -machine versatilepb -nographic -monitor null -serial null -semihosting -kernel noname.elf -gdb tcp::51234 -S &
