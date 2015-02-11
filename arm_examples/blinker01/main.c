@@ -1,3 +1,28 @@
+#define MAGICDEV_START 0x10500000
+#define MAGIC_PUTC	(MAGICDEV_START + 4)
+#define MAGIC_EXIT	(MAGICDEV_START + 8)
+
+void exit(int ec)
+{
+	*(volatile int *) (MAGIC_EXIT) = ec;
+	while (1)
+		; /* Wait for the sim to quit.  */
+}
+
+int putchar(int c)
+{
+	*(volatile int *) (MAGIC_PUTC) = c;
+}
+
+void putstr(const char *s)
+{
+	while (*s) {
+		putchar(*s);
+		s++;
+	}
+}
+
+
 
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
@@ -26,6 +51,8 @@ int notmain ( void )
         //for(ra=0;ra<0x100000;ra++) dummy(ra);
         PUT32(GPCLR0,1<<16);
         //for(ra=0;ra<0x100000;ra++) dummy(ra);
+		
+   	    exit(0);
     }
     return(0);
 }

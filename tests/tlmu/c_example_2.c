@@ -45,10 +45,12 @@
    0x10000000 IO_RAM SIZE
 */
 
-#define IO_RAM_START 0x20000000
-#define IO_RAM_SIZE  0x1000000
-#define SDRAM_START   0x00000000
-#define SDRAM_SIZE   0x100000
+#define IO_RAM_START   0x20000000
+#define IO_RAM_SIZE    0x1000000
+#define SDRAM_START    0x00000000
+#define SDRAM_SIZE     0x100000
+#define MAGICDEV_START 0x10500000
+#define MAGICDEV_END   0x10500100
 
 uint32_t io_ram[IO_RAM_SIZE / 4];
 uint32_t sdram[SDRAM_SIZE / 4];
@@ -79,6 +81,25 @@ void tlm_bus_write(void *o, int dbg, int64_t clk,
 {
 	struct tlmu_wrap *t = o;
 
+	/* Magic simulator device.  */
+	if (addr >= MAGICDEV_START && addr <= MAGICDEV_END) {
+		addr -= MAGICDEV_START;
+		switch (addr) {
+		case 0x0:
+			printf("%s: TRACE: %x\n", t->name,
+				*(uint32_t *)data);
+			break;
+		case 0x4:
+			putchar(*(uint32_t *)data);
+			break;
+		default:
+			printf("%s: STOP: %x\n", t->name,
+					*(uint32_t *)data);
+			tlmu_exit(&t->q);
+			break;
+		}
+	}
+	
     if (addr >= IO_RAM_START && addr <= (IO_RAM_START + sizeof io_ram)) {
 		unsigned char *dst = (void *) io_ram;
 		addr -= IO_RAM_START;
