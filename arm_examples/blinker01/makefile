@@ -83,7 +83,7 @@ endif
 ADEFS   = $(DADEFS) $(UADEFS)
 OBJS    = $(ASRC:.s=.o) $(SRC:.c=.o)
 LIBS    = $(DLIBS) $(ULIBS)
-MCFLAGS = -mthumb -mcpu=$(MCU)
+MCFLAGS = -mcpu=$(MCU)
 
 ASFLAGS = $(MCFLAGS) -g -gdwarf-2 -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(MCFLAGS) $(OPT) -gdwarf-2 -Wall -Wstrict-prototypes -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
