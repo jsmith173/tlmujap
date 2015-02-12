@@ -1,0 +1,1 @@
+../tlmujap/configure --target-list=cris-softmmu,mipsel-softmmu,arm-softmmu --extra-cflags=-fPIC --cross-prefix=i586-mingw32msvc-
