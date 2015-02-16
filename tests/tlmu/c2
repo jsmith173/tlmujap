@@ -1,6 +1,6 @@
 #!/bin/bash
-TLMUBIN=$HOME/Downloads/build-tlmujap/tests/tlmu
-TLMUSRC=$HOME/Downloads/tlmujap/tests/tlmu
+TLMUBIN=.
+TLMUSRC=../../../tlmujap/tests/tlmu
 
 cc -O2 -D_FORTIFY_SOURCE=2 -g -fPIC -Wall -O2 -g -I $TLMUBIN/include/tlmu  -c -o c_example.o $TLMUSRC/c_example_2.c
 cc -Wl,--warn-common -Wl,-z,relro -Wl,-z,now -pie -m64 -g  -L $TLMUBIN/lib  c_example.o  -ltlmu -pthread -ldl -lrt -o c_example_2

@@ -46,6 +46,7 @@
 
 #include "tlmu.h"
 
+#ifndef _WIN32
 static timer_t tlmu_hosttimer;
 pthread_mutex_t timer_mutex = PTHREAD_MUTEX_INITIALIZER;
 static struct tlmu_timer *timers = NULL;
@@ -183,6 +184,7 @@ static void tlmu_timers_init(void)
 		exit(1);
 	}
 }
+#endif
 
 
 void tlmu_init(struct tlmu *t, const char *name)
@@ -202,6 +204,7 @@ void tlmu_init(struct tlmu *t, const char *name)
 	tlmu_append_arg(t, "tlm");
 
 	/* Link in our timer as non-pending.  */
+    #ifndef _WIN32
 	pthread_mutex_lock(&timer_mutex);
 	if (!init) {
 		tlmu_timers_init();
@@ -212,6 +215,7 @@ void tlmu_init(struct tlmu *t, const char *name)
 	t->timer.next = timers;
 	timers = &t->timer;
 	pthread_mutex_unlock(&timer_mutex);
+	#endif
 }
 
 static void copylib(const char *path, const char *newpath)
@@ -230,7 +234,11 @@ static void copylib(const char *path, const char *newpath)
 		ld_path = strdup(path);
 	} else {
 		/* Otherwise, use dlopen to find path */
+		#ifdef _WIN32
+		handle = dlopen(path, RTLD_LOCAL | RTLD_NOW);
+		#else
 		handle = dlopen(path, RTLD_LOCAL | RTLD_DEEPBIND | RTLD_NOW);
+		#endif
 		if (!handle) {
 			fprintf(stderr, "dlopen(\"%s\") failed: %s\n", path, dlerror());
 			goto err;
@@ -257,7 +265,11 @@ static void copylib(const char *path, const char *newpath)
 		goto err;
 	}
 
+	#ifdef _WIN32
+	d = open(newpath, O_WRONLY | O_CREAT, S_IRWXU);
+	#else
 	d = open(newpath, O_WRONLY | O_CREAT, S_IRWXU | S_IRWXG);
+	#endif
 	if (d < 0) {
 		if (errno != EEXIST) {
 			perror(newpath);
@@ -305,7 +317,11 @@ int tlmu_load(struct tlmu *q, const char *soname)
 	int err = 0;
 	int n;
 
+	#ifdef _WIN32
+	mkdir(".tlmu");
+	#else
 	mkdir(".tlmu", S_IRWXU | S_IRWXG);
+    #endif
 
 	socopy = strdup(soname);
 	sobasename = basename(socopy);
@@ -316,7 +332,11 @@ int tlmu_load(struct tlmu *q, const char *soname)
 
 	copylib(soname, libname);
 
+	#ifdef _WIN32
+	q->dl_handle = dlopen(libname, RTLD_LOCAL | RTLD_NOW);
+	#else
 	q->dl_handle = dlopen(libname, RTLD_LOCAL | RTLD_DEEPBIND | RTLD_NOW);
+	#endif	
     if(!q->dl_handle){
         fprintf(stderr, "dlopen(%s):%s\n", libname, dlerror());
     }
@@ -349,7 +369,9 @@ int tlmu_load(struct tlmu *q, const char *soname)
 	q->tlm_get_dmi_ptr_cb = dlsym_wrap(q->dl_handle, "tlm_get_dmi_ptr_cb");
 	q->tlm_get_dmi_ptr = dlsym_wrap(q->dl_handle, "tlm_get_dmi_ptr");
     q->qemu_system_shutdown_request = dlsym_wrap(q->dl_handle, "qemu_system_shutdown_request");
+	#ifndef _WIN32
 	tlmu_set_timer_start_cb(q, q, tlmu_timer_start);
+	#endif
 	if (!q->main
 		|| !q->tlm_map_ram
 		|| !q->tlm_set_log_filename
