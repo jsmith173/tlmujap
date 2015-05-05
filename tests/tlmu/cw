@@ -1,7 +1,8 @@
 #!/bin/bash
 TLMUBIN=.
 TLMUSRC=../../../tlmujap/tests/tlmu
+SRC=c_example
 
-gcc -O2 -D_FORTIFY_SOURCE=2 -g -fPIC -Wall -O2 -g -I $TLMUBIN/include/tlmu  -c -o c_example.o $TLMUSRC/c_example_2.c
-gcc -Wl,--warn-common -pie -g  -L $TLMUBIN/lib  c_example.o  -ltlmu -pthread -ldl -o c_example_2
+gcc -O2 -D_FORTIFY_SOURCE=2 -g -fPIC -Wall -O2 -g -I $TLMUBIN/include/tlmu  -c -o $SRC.o $TLMUSRC/$SRC.c
+gcc -Wl,--warn-common -pie -g  -L $TLMUBIN/lib  $SRC.o  -ltlmu -pthread -ldl -o $SRC
 
