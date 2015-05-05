@@ -1,4 +1,3 @@
 #!/bin/bash
 
-DIR=$HOME/Downloads
-../tlmujap/configure-mingw --disable-sdl --target-list=cris-softmmu,mipsel-softmmu,arm-softmmu --extra-cflags="-I$DIR/zlib/include -L$DIR/zlib/lib -I$DIR/glib/include/glib-2.0 -L$DIR/glib/lib -I$DIR/gettext/include -L$DIR/gettext/lib -fPIC" --cross-prefix=i586-mingw32msvc-
+../tlmujap/configure --target-list=cris-softmmu,mipsel-softmmu,arm-softmmu --extra-cflags=-fPIC
